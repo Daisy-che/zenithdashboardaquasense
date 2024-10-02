@@ -21,10 +21,8 @@ export interface Performance{
     location: string;
     status:string;
 }
-// googlemaps.d.ts
-interface Window {
-    google: any;
-  }
+
+
 export interface PerformanceData {
   address?: string;
   latitude?: number;

@@ -1,37 +1,45 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
+
 export interface Sensor {
   latitude: number;
-  longitude: number;
+  longitude: number; // Ensure this is a number
   name: string;
   status: 'Active' | 'Inactive';
 }
+
 declare global {
   interface Window {
-    google: any;
+    google: typeof google; // Declare google with a type annotation
   }
 }
+
 interface MapProps {
   sensorData: Sensor[];
 }
+
 const Map: React.FC<MapProps> = ({ sensorData }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const mapRef = useRef<HTMLDivElement | null>(null);
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [map, setMap] = useState<google.maps.Map | null>(null);
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       searchLocation(searchQuery);
     }
   };
+
   const searchLocation = (query: string) => {
-    const google = window.google;
+    const google = window.google; // Use window.google directly
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: query }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
-      if (status === "OK") {
+
+    geocoder.geocode({ address: query }, (results, status) => {
+      if (status === "OK" && results && results.length > 0) {
         const location = results[0].geometry.location;
         map?.setCenter(location);
         new google.maps.Marker({
@@ -44,6 +52,7 @@ const Map: React.FC<MapProps> = ({ sensorData }) => {
       }
     });
   };
+
   useEffect(() => {
     const loadGoogleMapsScript = () => {
       if (!googleMapsApiKey) {
@@ -62,13 +71,15 @@ const Map: React.FC<MapProps> = ({ sensorData }) => {
         console.error("Failed to load Google Maps script.");
       };
     };
+
     const initMap = () => {
       if (mapRef.current && sensorData.length > 0) {
-        const google = window.google;
+        const google = window.google; // Use window.google directly
         const nairobiBounds = new google.maps.LatLngBounds(
           { lat: -1.4336, lng: 36.6500 },
           { lat: -1.1359, lng: 37.0390 }
         );
+
         const newMap = new google.maps.Map(mapRef.current, {
           center: { lat: -1.2921, lng: 36.8219 },
           zoom: 12,
@@ -77,7 +88,9 @@ const Map: React.FC<MapProps> = ({ sensorData }) => {
             strictBounds: true,
           },
         });
+
         setMap(newMap);
+
         sensorData.forEach((sensor) => {
           new google.maps.Marker({
             position: { lat: sensor.latitude, lng: sensor.longitude },
@@ -90,12 +103,14 @@ const Map: React.FC<MapProps> = ({ sensorData }) => {
         });
       }
     };
-    if (!window.google) {
+
+    if (typeof window.google === "undefined") {
       loadGoogleMapsScript();
     } else {
       initMap();
     }
   }, [sensorData, googleMapsApiKey]);
+
   return (
     <div>
       <input
@@ -122,6 +137,5 @@ const Map: React.FC<MapProps> = ({ sensorData }) => {
     </div>
   );
 };
+
 export default Map;
-
-

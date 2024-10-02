@@ -19,8 +19,8 @@ export const fetchPerformance = async (): Promise<PerformanceData[]> => {
           status: item.status,
     }));
       return performanceMetrics;
-  } catch (error: any) {
-      console.error('Error fetching performance data:', error.message || error);
+  } catch (error: unknown) {
+      console.error('Error fetching performance data:', error);
       throw error;
   }
 };

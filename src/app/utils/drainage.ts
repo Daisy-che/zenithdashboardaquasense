@@ -9,8 +9,9 @@ export const processDrainageData = async () => {
     }
     const data = await response.json();
     return data;
-  } catch (error: any) {
-    console.error('Error in fetching drainage systems:', error.message);
+  } catch (error: unknown) {
+    console.error('Error in fetching drainage systems:', error);
     throw error;
   }
 };
+

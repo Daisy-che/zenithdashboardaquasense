@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Home, BarChart2, Users, Settings, ChartLine } from 'lucide-react';
+import { Home, BarChart2, Settings} from 'lucide-react';
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
